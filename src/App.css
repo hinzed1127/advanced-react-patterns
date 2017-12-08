@@ -13,6 +13,19 @@ body {
   margin-top: 50%;
 }
 
+.toggle-button button {
+  height: 45px;
+  width:  60px;
+  border-radius: 5px;
+
+}
+
+.toggle-button button:focus {
+  background-image: none;
+  outline: 0;
+  box-shadow: none;
+}
+
 .switch {
   position: relative;
   display: inline-block;

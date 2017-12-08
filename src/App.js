@@ -4,32 +4,17 @@ import './App.css';
 
 const TOGGLE_CONTEXT = '__toggle__';
 
-function ToggleOn({children}, context) {
-  const {on} = context[TOGGLE_CONTEXT];
+const ToggleOn = withToggle(({children, on}) => {
   return on ? children : null;
-}
+});
 
-ToggleOn.contextTypes = {
-  [TOGGLE_CONTEXT]: PropTypes.object.isRequired
-};
-
-function ToggleOff({children}, context) {
-  const {on} = context[TOGGLE_CONTEXT];
+const ToggleOff = withToggle(({children, on}) => {
   return on ? null : children;
-}
+});
 
-ToggleOff.contextTypes = {
-  [TOGGLE_CONTEXT]: PropTypes.object.isRequired
-};
-
-function ToggleButton(props, context) {
-  const {on, toggle} = context[TOGGLE_CONTEXT];
+const ToggleButton = withToggle(({on, toggle, ...props}) => {
   return <Switch on={on} onClick={toggle} {...props} />;
-}
-
-ToggleButton.contextTypes = {
-  [TOGGLE_CONTEXT]: PropTypes.object.isRequired
-};
+});
 
 class Toggle extends Component {
   static On = ToggleOn;
@@ -63,6 +48,25 @@ class Toggle extends Component {
   } 
 }
 
+function withToggle(Component) {
+  function Wrapper(props, context) {
+    const toggleContext = context[TOGGLE_CONTEXT];
+    return <Component {...toggleContext} {...props} />;
+  }
+
+  Wrapper.contextTypes = {
+    [TOGGLE_CONTEXT]: PropTypes.object.isRequired
+  };
+
+  return Wrapper;
+}
+
+const MyToggle = withToggle(({on, toggle}) => (
+  <button onClick={toggle}>
+   {on ? 'On' : 'Off'}
+  </button>
+));
+
 function Switch({on, onClick}) {
   return (
     <div className='toggle-container'>
@@ -79,10 +83,13 @@ class App extends Component {
     return (
       <div className='container'>
         <Toggle onToggle={on => console.log(on)}>
-          <Toggle.Off>The button if off</Toggle.Off>
+          <Toggle.Off>The button is off</Toggle.Off>
+          <Toggle.On>The button is on</Toggle.On>
+          <hr />
           <Toggle.Button />
-          <div>
-            <Toggle.On>The button is on</Toggle.On>
+          <hr />
+          <div className='toggle-button'>
+            <MyToggle />
           </div>
         </Toggle>
       </div>
